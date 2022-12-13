@@ -12,7 +12,10 @@ public class Recorder {
     //定义静态变量
     private static int allEnemyTank = 0;
     private static BufferedWriter bw = null;
+    private static BufferedReader br = null;
     private static String recordFile = "src/myRecord.txt";
+    //定义一个存放敌人坦克的Node节点
+    private static Vector<Node> nodes = new Vector<>();
 
     public static Vector<EnemyTank> getEnemyTanks() {
         return enemyTanks;
@@ -64,5 +67,35 @@ public class Recorder {
             }
         }
 
+    }
+
+
+    //读取文件的方法，恢复相关的信息
+    public static Vector<Node> getNodesInEnemyTankRec(){
+        String line = "";
+
+        try {
+            br = new BufferedReader(new FileReader(recordFile));
+            //击毁的坦克
+            allEnemyTank = Integer.parseInt(br.readLine());
+            while ((line = br.readLine()) != null){
+                //按空格拆分成字符串数组
+                String[] xyd = line.split(" ");
+                //把字符串数组转成int创建对象
+                Node node = new Node(Integer.parseInt(xyd[0]),Integer.parseInt(xyd[1]),Integer.parseInt(xyd[2]));
+                nodes.add(node);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(br != null){
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return nodes;
     }
 }

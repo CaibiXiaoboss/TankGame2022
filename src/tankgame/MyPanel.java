@@ -21,6 +21,8 @@ public class MyPanel extends JPanel implements KeyListener,Runnable{
     Hero hero = null;
     //定义一个敌人对象的集合，泛型使用EnemyTank
     Vector<EnemyTank> enemyTanks = new Vector<>();
+    //定义一个存放Node节点的Vector集合，用于恢复敌人坦克的坐标和方向
+    Vector<Node> nodes = new Vector<>();
     //定义爆炸效果集合
     //当子弹击中坦克时，就加入Bomb对象到集合中
     Vector<Bomb> bombs = new Vector<>();
@@ -35,23 +37,53 @@ public class MyPanel extends JPanel implements KeyListener,Runnable{
 
     //构造器默认初始化一个Hero对象
     //构造器创建敌我坦克对象
-    public MyPanel(){
+    public MyPanel(String key){
+        //nodes集合存放文件中的node对象
+        nodes = Recorder.getNodesInEnemyTankRec();
         //初始化自己的坦克
         hero = new Hero(500,100);
         //把敌方坦克集合set进Recorder类中
         Recorder.setEnemyTanks(enemyTanks);
 
+        switch (key){
+            //开新游戏
+            case "1":
+                for (int i = 0; i < enemyTankSize; i++) {
+                    EnemyTank enemyTank = new EnemyTank(100 * (i + 1), 0);
+                    enemyTank.setEnemyTanks(enemyTanks);
+                    new Thread(enemyTank).start();
+                    enemyTank.setDirect(3);
+                    enemyTanks.add(enemyTank);
+                }
+                break;
+            //继续游戏
+            case "2":
+                for(int i = 0;i < nodes.size();i++){
+                    Node node = nodes.get(i);
+                    EnemyTank enemyTank = new EnemyTank(node.getX(),node.getY());
+                    enemyTank.setEnemyTanks(enemyTanks);
+                    new Thread(enemyTank).start();
+                    enemyTank.setDirect(node.getDirect());
+                    enemyTanks.add(enemyTank);
+                }
+                break;
+            default:
+                System.out.println("你的输入有误");
+        }
+
+
+        //开始新游戏的写法
         //初始化敌人的坦克，循环添加地方坦克对象进集合中
-        for (int i = 0; i < enemyTankSize; i++) {
+//        for (int i = 0; i < enemyTankSize; i++) {
             //创建一个敌方坦克对象
-            EnemyTank enemyTank = new EnemyTank(100 * (i + 1), 0);
+//            EnemyTank enemyTank = new EnemyTank(100 * (i + 1), 0);
             //把集合set进去enemyTank类中
-            enemyTank.setEnemyTanks(enemyTanks);
+//            enemyTank.setEnemyTanks(enemyTanks);
             //启动坦克线程
-            new Thread(enemyTank).start();
+//            new Thread(enemyTank).start();
             //初始化方向
 //            enemyTank.setDirect((int)(Math.random() * 4));
-            enemyTank.setDirect(3);
+//            enemyTank.setDirect(3);
 
             //已经在敌人坦克的类里内置
 //            //初始化敌人的子弹对象
@@ -62,8 +94,8 @@ public class MyPanel extends JPanel implements KeyListener,Runnable{
 //            new Thread(shot).start();
 
             //把坦克对象加入集合中
-            enemyTanks.add(enemyTank);
-        }
+//            enemyTanks.add(enemyTank);
+//        }
 
 
 //        for(int i = 0;i < enemyTankSize;i++){
